@@ -81,8 +81,11 @@ noBtn.addEventListener("click", (e) => {
 
 // initial position
 window.addEventListener("load", () => {
-  teleportNo();
+  // Start in the top-left corner and DO NOT wiggle
+  noBtn.style.left = "12px";
+  noBtn.style.top  = "12px";
 });
+
 
 // ----------------------------
 // YES BUTTON SUCCESS STATE
