@@ -12,21 +12,44 @@ const btnRow = document.getElementById("btnRow");
 // ----------------------------
 
 function teleportNo() {
-  const padding = 20;
+  const padding = 24;
 
   const btnRect = noBtn.getBoundingClientRect();
 
   const maxX = window.innerWidth - btnRect.width - padding;
   const maxY = window.innerHeight - btnRect.height - padding;
 
+  // Bias movement so it REALLY changes vertical position
+  const verticalZones = [
+    0.1,   // top
+    0.35,  // upper-middle
+    0.6,   // lower-middle
+    0.85   // bottom
+  ];
+
+  const zoneY =
+    verticalZones[Math.floor(Math.random() * verticalZones.length)];
+
+  const y = zoneY * maxY + (Math.random() * 40 - 20);
   const x = Math.random() * maxX;
-  const y = Math.random() * maxY;
 
   noBtn.style.position = "fixed";
-  noBtn.style.left = `${x}px`;
-  noBtn.style.top = `${y}px`;
+  noBtn.style.left = `${Math.max(padding, x)}px`;
+  noBtn.style.top = `${Math.max(padding, y)}px`;
   noBtn.style.zIndex = 9999;
+
+  // tiny shake so it feels like it *fled*
+  noBtn.animate(
+    [
+      { transform: "scale(1) rotate(0deg)" },
+      { transform: "scale(1.05) rotate(-6deg)" },
+      { transform: "scale(1) rotate(4deg)" },
+      { transform: "scale(1) rotate(0deg)" }
+    ],
+    { duration: 180 }
+  );
 }
+
 
 // run when cursor gets CLOSE
 document.addEventListener("mousemove", (e) => {
