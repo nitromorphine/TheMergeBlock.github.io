@@ -7,32 +7,34 @@ const subtitle = document.getElementById("subtitle");
 const hint = document.getElementById("hint");
 const btnRow = document.getElementById("btnRow");
 
-if (!noBtn) {
-  // If this triggers, your HTML still has the wrong id or duplicate files.
-  alert('NO button not found. Make sure there is exactly one element with id="noBtn".');
-}
-
 function clamp(v, min, max) {
   return Math.max(min, Math.min(max, v));
 }
 
-function setTopLeft() {
-  noBtn.style.position = "fixed";
-  noBtn.style.left = "12px";
-  noBtn.style.top = "12px";
-  noBtn.style.zIndex = "99999";
+function setNoPos(px, py) {
+  // We move the button with CSS variables -> transform translate()
+  noBtn.style.setProperty("--nx", `${px}px`);
+  noBtn.style.setProperty("--ny", `${py}px`);
+}
+
+function getNoCenter() {
+  const r = noBtn.getBoundingClientRect();
+  return { cx: r.left + r.width / 2, cy: r.top + r.height / 2, r };
 }
 
 function flee(wiggle = true) {
   const pad = 16;
+
   const vw = document.documentElement.clientWidth;
   const vh = document.documentElement.clientHeight;
 
-  const r = noBtn.getBoundingClientRect();
-  const maxX = vw - r.width - pad;
-  const maxY = vh - r.height - pad;
+  const rect = noBtn.getBoundingClientRect();
 
-  // Ensure it moves vertically a lot: choose top 25% OR bottom 25%
+  // usable bounds for placing the button fully on screen
+  const maxX = vw - rect.width - pad;
+  const maxY = vh - rect.height - pad;
+
+  // Bias vertical movement strongly so it goes UP/DOWN a lot
   const topBand = Math.random() < 0.5;
   let y = topBand
     ? Math.random() * (maxY * 0.25)
@@ -43,49 +45,47 @@ function flee(wiggle = true) {
   x = clamp(x, pad, maxX);
   y = clamp(y, pad, maxY);
 
-  noBtn.style.left = `${x}px`;
-  noBtn.style.top  = `${y}px`;
+  setNoPos(x, y);
 
   if (wiggle) {
     noBtn.animate(
       [
-        { transform: "scale(1) rotate(0deg)" },
-        { transform: "scale(1.07) rotate(-10deg)" },
-        { transform: "scale(1) rotate(8deg)" },
-        { transform: "scale(1) rotate(0deg)" }
+        { transform: `translate(${x}px, ${y}px) scale(1) rotate(0deg)` },
+        { transform: `translate(${x}px, ${y}px) scale(1.07) rotate(-10deg)` },
+        { transform: `translate(${x}px, ${y}px) scale(1) rotate(8deg)` },
+        { transform: `translate(${x}px, ${y}px) scale(1) rotate(0deg)` }
       ],
       { duration: 180 }
     );
   }
 }
 
-// Show that JS is running (you’ll see the hint change)
+// Start top-left (but pretty)
 window.addEventListener("DOMContentLoaded", () => {
-  setTopLeft();
-  hint.textContent = "JS loaded ✅ (try to click NO 😈)";
+  setNoPos(12, 12);
 });
 
-// Use pointer events (covers mouse + touch + pen)
+// Use pointer events (mouse + touch + pen)
 document.addEventListener("pointermove", (e) => {
-  const r = noBtn.getBoundingClientRect();
-  const cx = r.left + r.width / 2;
-  const cy = r.top + r.height / 2;
+  const { cx, cy } = getNoCenter();
   const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
 
-  // Flee sooner = harder to catch
+  // bigger number = runs away sooner
   if (dist < 220) flee(true);
 });
 
-// If you try to press anywhere, it flees (mobile-proof)
+// Mobile-proof: any press makes it flee
 document.addEventListener("pointerdown", () => flee(true));
 
-// If somehow clicked, still flees
+// If somehow clicked, still flee
 noBtn.addEventListener("click", (e) => {
   e.preventDefault();
   flee(true);
 });
 
-// YES button success state
+// ----------------------------
+// YES BUTTON SUCCESS STATE
+// ----------------------------
 yesBtn.addEventListener("click", () => {
   card.classList.add("success", "pop");
 
@@ -108,9 +108,12 @@ yesBtn.addEventListener("click", () => {
     spawnHeartsConfetti(20);
     cuteBtn.textContent = "HUG DELIVERED ✅";
     cuteBtn.disabled = true;
+    cuteBtn.style.filter = "brightness(0.98)";
+    cuteBtn.style.cursor = "default";
   });
 });
 
+// Falling emoji confetti
 function spawnHeartsConfetti(count = 30) {
   const layer = document.createElement("div");
   layer.className = "confetti";
