@@ -18,23 +18,18 @@
       <p class="subtitle" id="subtitle">I promise snacks, good vibes, and maximum affection.</p>
 
       <div class="btn-row" id="btnRow">
-        <button class="btn yes" id="yesBtn" type="button">
-          Yes! 💘
-        </button>
-
-        <!-- The "no" is positioned absolutely inside this container -->
-        <div class="no-zone" id="noZone" aria-hidden="true">
-          <button class="btn no" id="noBtn" type="button" tabindex="-1">
-            No 🙃
-          </button>
-        </div>
+        <button class="btn yes" id="yesBtn" type="button">Yes! 💘</button>
       </div>
 
       <p class="hint" id="hint">Tip: the “No” button is… shy. 😅</p>
     </section>
   </main>
 
+  <!-- NO button is now outside the card so it can run anywhere -->
+  <button class="btn no" id="noBtn" type="button" aria-hidden="true" tabindex="-1">
+    No 🙃
+  </button>
+
   <script src="script.js"></script>
 </body>
 </html>
-
