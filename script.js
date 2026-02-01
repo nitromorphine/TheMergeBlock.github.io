@@ -1,6 +1,5 @@
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
-const noZone = document.getElementById("noZone");
 
 const card = document.getElementById("card");
 const title = document.getElementById("title");
@@ -8,103 +7,85 @@ const subtitle = document.getElementById("subtitle");
 const hint = document.getElementById("hint");
 const btnRow = document.getElementById("btnRow");
 
-// --- "No" button dodge logic ---
-function placeNoRandom() {
-  const zoneRect = noZone.getBoundingClientRect();
+// ----------------------------
+// NO BUTTON = IMPOSSIBLE MODE
+// ----------------------------
+
+function teleportNo() {
+  const padding = 20;
+
   const btnRect = noBtn.getBoundingClientRect();
 
-  // Available space inside zone
-  const maxX = Math.max(0, zoneRect.width - btnRect.width);
-  const maxY = Math.max(0, zoneRect.height - btnRect.height);
+  const maxX = window.innerWidth - btnRect.width - padding;
+  const maxY = window.innerHeight - btnRect.height - padding;
 
-  // Random position
   const x = Math.random() * maxX;
   const y = Math.random() * maxY;
 
+  noBtn.style.position = "fixed";
   noBtn.style.left = `${x}px`;
   noBtn.style.top = `${y}px`;
+  noBtn.style.zIndex = 9999;
 }
 
-function dodge() {
-  // Make it feel playful: move a couple times quickly
-  placeNoRandom();
-  setTimeout(placeNoRandom, 70);
-}
+// run when cursor gets CLOSE
+document.addEventListener("mousemove", (e) => {
+  const rect = noBtn.getBoundingClientRect();
 
-noBtn.addEventListener("mouseenter", dodge);
+  const dx = e.clientX - (rect.left + rect.width / 2);
+  const dy = e.clientY - (rect.top + rect.height / 2);
 
-// Mobile: if they try to tap near it, it scoots away
-noZone.addEventListener("touchstart", (e) => {
-  e.preventDefault();
-  dodge();
-}, { passive: false });
+  const distance = Math.sqrt(dx * dx + dy * dy);
 
-// Just in case someone manages to click it: ignore
+  if (distance < 120) {
+    teleportNo();
+  }
+});
+
+// mobile: teleport on touch anywhere near
+document.addEventListener(
+  "touchstart",
+  () => teleportNo(),
+  { passive: true }
+);
+
+// emergency backup if click somehow happens
 noBtn.addEventListener("click", (e) => {
   e.preventDefault();
-  dodge();
+  teleportNo();
 });
 
-// Initial random placement after layout
+// initial position
 window.addEventListener("load", () => {
-  placeNoRandom();
+  teleportNo();
 });
 
-// --- Yes button success state ---
+// ----------------------------
+// YES BUTTON SUCCESS STATE
+// ----------------------------
+
 yesBtn.addEventListener("click", () => {
   card.classList.add("success", "pop");
 
   title.textContent = "YAY!! 💖💖💖";
-  subtitle.textContent = "Okay… it’s official. You’re my Valentine now 😌🌹";
-  hint.textContent = "I’m smiling like an idiot right now.";
+  subtitle.textContent =
+    "Okay… it’s official. You’re my Valentine now 😌🌹";
+  hint.textContent = "I’m smiling way too hard right now.";
 
   btnRow.innerHTML = `
-    <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+    <div style="display:flex; flex-direction:column; gap:12px; align-items:center;">
       <div style="font-size:18px; font-weight:800;">💌 Date idea:</div>
-      <div class="small">Pick one: 🍕 Pizza • 🍦 Ice cream • 🎬 Movie • 🌮 Tacos • 🌙 Night drive</div>
+      <div class="small">🍕 Pizza • 🍦 Ice cream • 🎬 Movie • 🌮 Tacos • 🌙 Night drive</div>
       <button class="btn yes" id="cuteBtn" type="button">Send a hug 🫶</button>
     </div>
   `;
 
-  // small confetti hearts
-  spawnHeartsConfetti(36);
+  spawnHeartsConfetti(40);
 
   const cuteBtn = document.getElementById("cuteBtn");
   cuteBtn.addEventListener("click", () => {
-    spawnHeartsConfetti(18);
+    spawnHeartsConfetti(20);
     cuteBtn.textContent = "HUG DELIVERED ✅";
     cuteBtn.disabled = true;
-    cuteBtn.style.filter = "brightness(0.98)";
-    cuteBtn.style.cursor = "default";
   });
 });
-
-function spawnHeartsConfetti(count = 30) {
-  const layer = document.createElement("div");
-  layer.className = "confetti";
-  document.body.appendChild(layer);
-
-  const emojis = ["💖","💘","💕","💞","🌸","✨","🍓","🫶"];
-
-  for (let i = 0; i < count; i++) {
-    const s = document.createElement("span");
-    s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-    s.style.position = "absolute";
-    s.style.left = `${Math.random() * 100}vw`;
-    s.style.top = `-10px`;
-    s.style.fontSize = `${14 + Math.random() * 20}px`;
-    s.style.opacity = `${0.75 + Math.random() * 0.25}`;
-    s.style.transform = `translateY(0) rotate(${Math.random() * 90 - 45}deg)`;
-    s.style.transition = "transform 1.6s ease, opacity 1.6s ease";
-    layer.appendChild(s);
-
-    // Kick off the fall
-    requestAnimationFrame(() => {
-      const fall = 80 + Math.random() * 40; // vh
-      s.style.transform = `translateY(${fall}vh) rotate(${Math.random() * 360}deg)`;
-      s.style.opacity = "0";
-    });
-  }
-
-  setTimeout(() => layer.remove(), 1800);
-}
