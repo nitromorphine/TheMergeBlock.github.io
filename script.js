@@ -7,29 +7,32 @@ const subtitle = document.getElementById("subtitle");
 const hint = document.getElementById("hint");
 const btnRow = document.getElementById("btnRow");
 
+if (!noBtn) {
+  // If this triggers, your HTML still has the wrong id or duplicate files.
+  alert('NO button not found. Make sure there is exactly one element with id="noBtn".');
+}
+
 function clamp(v, min, max) {
   return Math.max(min, Math.min(max, v));
 }
 
-function setNoFixedTopLeft() {
-  // Force style in JS too (beats caching/old CSS issues)
+function setTopLeft() {
   noBtn.style.position = "fixed";
   noBtn.style.left = "12px";
   noBtn.style.top = "12px";
-  noBtn.style.zIndex = "9999";
+  noBtn.style.zIndex = "99999";
 }
 
 function flee(wiggle = true) {
   const pad = 16;
-
   const vw = document.documentElement.clientWidth;
   const vh = document.documentElement.clientHeight;
 
-  const rect = noBtn.getBoundingClientRect();
-  const maxX = vw - rect.width - pad;
-  const maxY = vh - rect.height - pad;
+  const r = noBtn.getBoundingClientRect();
+  const maxX = vw - r.width - pad;
+  const maxY = vh - r.height - pad;
 
-  // Bias y to really move up/down (top 25% or bottom 25%)
+  // Ensure it moves vertically a lot: choose top 25% OR bottom 25%
   const topBand = Math.random() < 0.5;
   let y = topBand
     ? Math.random() * (maxY * 0.25)
@@ -40,17 +43,15 @@ function flee(wiggle = true) {
   x = clamp(x, pad, maxX);
   y = clamp(y, pad, maxY);
 
-  noBtn.style.position = "fixed";
   noBtn.style.left = `${x}px`;
   noBtn.style.top  = `${y}px`;
-  noBtn.style.zIndex = "9999";
 
   if (wiggle) {
     noBtn.animate(
       [
         { transform: "scale(1) rotate(0deg)" },
-        { transform: "scale(1.06) rotate(-8deg)" },
-        { transform: "scale(1) rotate(6deg)" },
+        { transform: "scale(1.07) rotate(-10deg)" },
+        { transform: "scale(1) rotate(8deg)" },
         { transform: "scale(1) rotate(0deg)" }
       ],
       { duration: 180 }
@@ -58,40 +59,39 @@ function flee(wiggle = true) {
   }
 }
 
-// Make absolutely sure it starts top-left
+// Show that JS is running (you’ll see the hint change)
 window.addEventListener("DOMContentLoaded", () => {
-  setNoFixedTopLeft();
+  setTopLeft();
+  hint.textContent = "JS loaded ✅ (try to click NO 😈)";
 });
 
-// Desktop: flee when cursor gets close
-document.addEventListener("mousemove", (e) => {
+// Use pointer events (covers mouse + touch + pen)
+document.addEventListener("pointermove", (e) => {
   const r = noBtn.getBoundingClientRect();
   const cx = r.left + r.width / 2;
   const cy = r.top + r.height / 2;
-
   const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
 
-  if (dist < 180) flee(true);
+  // Flee sooner = harder to catch
+  if (dist < 220) flee(true);
 });
 
-// Mobile: any touch makes it flee
-document.addEventListener("touchstart", () => flee(true), { passive: true });
+// If you try to press anywhere, it flees (mobile-proof)
+document.addEventListener("pointerdown", () => flee(true));
 
-// If somehow clicked, ignore & flee
+// If somehow clicked, still flees
 noBtn.addEventListener("click", (e) => {
   e.preventDefault();
   flee(true);
 });
 
-// ----------------------------
-// YES BUTTON SUCCESS STATE
-// ----------------------------
+// YES button success state
 yesBtn.addEventListener("click", () => {
   card.classList.add("success", "pop");
 
   title.textContent = "YAY!! 💖💖💖";
   subtitle.textContent = "Okay… it’s official. You’re my Valentine now 😌🌹";
-  hint.textContent = "I’m smiling way too hard right now.";
+  hint.textContent = "You chose correctly 😌💘";
 
   btnRow.innerHTML = `
     <div style="display:flex; flex-direction:column; gap:12px; align-items:center;">
@@ -108,8 +108,6 @@ yesBtn.addEventListener("click", () => {
     spawnHeartsConfetti(20);
     cuteBtn.textContent = "HUG DELIVERED ✅";
     cuteBtn.disabled = true;
-    cuteBtn.style.filter = "brightness(0.98)";
-    cuteBtn.style.cursor = "default";
   });
 });
 
