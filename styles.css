@@ -111,27 +111,6 @@ body{
   box-shadow: 0 18px 30px rgba(255,77,141,.28);
 }
 
-.no-zone{
-  /* Container for the moving "No" button */
-  position: relative;
-  width: 170px;
-  height: 54px;
-}
-
-.btn.no{
-  position:absolute;
-  left: 0;
-  top: 0;
-  background: #ffffff;
-  color: #ff2d6f;
-  border: 2px solid rgba(255,45,111,.35);
-  box-shadow: 0 10px 20px rgba(0,0,0,.08);
-}
-
-.btn.no:hover{
-  transform: translateY(-1px);
-}
-
 .hint{
   margin: 10px 0 0;
   color: rgba(0,0,0,.55);
@@ -163,3 +142,9 @@ body{
   color: rgba(0,0,0,.62);
   margin-top: 10px;
 }
+
+/* ---------------------------
+   NO BUTTON (RUNAWAY MODE)
+---------------------------- */
+.btn.no{
+  position: fixed;            /* key */
