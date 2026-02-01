@@ -1,1 +1,40 @@
-echo "Hello World"
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Be My Valentine 💘</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <main class="wrap">
+    <section class="card" id="card" aria-live="polite">
+      <div class="hearts" aria-hidden="true">
+        <span>💖</span><span>💘</span><span>💞</span><span>💕</span><span>💗</span>
+      </div>
+
+      <h1 class="title" id="title">Be my Valentine? 💌</h1>
+      <p class="subtitle" id="subtitle">I promise snacks, good vibes, and maximum affection.</p>
+
+      <div class="btn-row" id="btnRow">
+        <button class="btn yes" id="yesBtn" type="button">
+          Yes! 💘
+        </button>
+
+        <!-- The "no" is positioned absolutely inside this container -->
+        <div class="no-zone" id="noZone" aria-hidden="true">
+          <button class="btn no" id="noBtn" type="button" tabindex="-1">
+            No 🙃
+          </button>
+        </div>
+      </div>
+
+      <p class="hint" id="hint">Tip: the “No” button is… shy. 😅</p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
