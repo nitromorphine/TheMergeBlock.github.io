@@ -115,11 +115,12 @@ body{
 .success .hearts{ font-size: 26px; }
 
 .confetti{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  overflow:hidden;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
+
 
 .pop{ animation: pop .45s ease forwards; }
 @keyframes pop{
