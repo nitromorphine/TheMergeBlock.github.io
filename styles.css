@@ -12,6 +12,7 @@
 
 *{ box-sizing:border-box; }
 html,body{ height:100%; }
+
 body{
   margin:0;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
@@ -25,10 +26,7 @@ body{
   overflow:hidden;
 }
 
-.wrap{
-  width:min(92vw, 720px);
-  padding: 24px 0;
-}
+.wrap{ width:min(92vw, 720px); padding: 24px 0; }
 
 .card{
   position:relative;
@@ -130,24 +128,22 @@ body{
   100%{ transform: scale(1); opacity:1; }
 }
 
-.small{
-  font-size: 14px;
-  color: rgba(0,0,0,.62);
-  margin-top: 10px;
-}
+.small{ font-size: 14px; color: rgba(0,0,0,.62); margin-top: 10px; }
 
-/* NO BUTTON: starts top-left, free to roam */
+/* NO BUTTON: force custom look + fixed positioning */
 .btn.no{
   position: fixed !important;
   left: 12px !important;
   top: 12px !important;
-  z-index: 9999 !important;
+  z-index: 99999 !important;
 
-  background: #ffffff;
-  color: #ff2d6f;
-  border: 2px solid rgba(255,45,111,.35);
-  box-shadow: 0 10px 20px rgba(0,0,0,.08);
+  appearance: none;
+  -webkit-appearance: none;
 
-  transition: left .12s ease, top .12s ease, transform .12s ease;
-  user-select: none;
+  background: #ffffff !important;
+  color: #ff2d6f !important;
+  border: 2px solid rgba(255,45,111,.45) !important;
+  box-shadow: 0 10px 20px rgba(0,0,0,.10) !important;
+
+  transition: left .10s ease, top .10s ease, transform .10s ease;
 }
