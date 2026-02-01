@@ -11,44 +11,45 @@ const btnRow = document.getElementById("btnRow");
 // NO BUTTON = IMPOSSIBLE MODE
 // ----------------------------
 
-function teleportNo() {
-  const padding = 24;
+function teleportNo(forceFar = false, wiggle = true) {
+  const pad = 16;
 
-  const btnRect = noBtn.getBoundingClientRect();
+  const vw = document.documentElement.clientWidth;
+  const vh = document.documentElement.clientHeight;
 
-  const maxX = window.innerWidth - btnRect.width - padding;
-  const maxY = window.innerHeight - btnRect.height - padding;
+  const rect = noBtn.getBoundingClientRect();
+  const maxX = vw - rect.width - pad;
+  const maxY = vh - rect.height - pad;
 
-  // Bias movement so it REALLY changes vertical position
-  const verticalZones = [
-    0.1,   // top
-    0.35,  // upper-middle
-    0.6,   // lower-middle
-    0.85   // bottom
-  ];
+  let x = Math.random() * maxX;
+  let y = Math.random() * maxY;
 
-  const zoneY =
-    verticalZones[Math.floor(Math.random() * verticalZones.length)];
+  if (forceFar) {
+    const topBand = Math.random() < 0.5;
+    y = topBand
+      ? Math.random() * (maxY * 0.25)
+      : (maxY * 0.75) + Math.random() * (maxY * 0.25);
+  }
 
-  const y = zoneY * maxY + (Math.random() * 40 - 20);
-  const x = Math.random() * maxX;
+  x = clamp(x, pad, maxX);
+  y = clamp(y, pad, maxY);
 
-  noBtn.style.position = "fixed";
-  noBtn.style.left = `${Math.max(padding, x)}px`;
-  noBtn.style.top = `${Math.max(padding, y)}px`;
-  noBtn.style.zIndex = 9999;
+  noBtn.style.left = `${x}px`;
+  noBtn.style.top  = `${y}px`;
 
-  // tiny shake so it feels like it *fled*
-  noBtn.animate(
-    [
-      { transform: "scale(1) rotate(0deg)" },
-      { transform: "scale(1.05) rotate(-6deg)" },
-      { transform: "scale(1) rotate(4deg)" },
-      { transform: "scale(1) rotate(0deg)" }
-    ],
-    { duration: 180 }
-  );
+  if (wiggle) {
+    noBtn.animate(
+      [
+        { transform: "scale(1) rotate(0deg)" },
+        { transform: "scale(1.06) rotate(-8deg)" },
+        { transform: "scale(1) rotate(6deg)" },
+        { transform: "scale(1) rotate(0deg)" }
+      ],
+      { duration: 180 }
+    );
+  }
 }
+
 
 
 // run when cursor gets CLOSE
